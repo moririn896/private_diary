@@ -54,7 +54,7 @@ class DiaryCreateView(LoginRequiredMixin, generic.CreateView):
 
     def form_valid(self, form):
         diary = form.save(commit=False)
-        diary.user = self.user
+        diary.user = self.request.user
         diary.save()
         messages.success(self.request, '日記を作成しました。')
         return super().form_valid(form)
