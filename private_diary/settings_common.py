@@ -218,3 +218,4 @@ MEDIA_URL = '/media/'
 
 # ログイン/ログアウト後の遷移先を設定
 LOGIN_REDIRECT_URL = 'diary:diary_list'
+
