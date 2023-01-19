@@ -8,9 +8,11 @@ from .forms import InquiryForm, DiaryCreateForm
 
 from django.contrib import messages
 
-from django.contrib.auth.mixins import LoginRequiredMixin
+from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 
 from .models import Diary
+
+from django.shortcuts import get_object_or_404
 
 logger = logging.getLogger(__name__)
 
@@ -41,12 +43,22 @@ class DiaryListView(LoginRequiredMixin, generic.ListView):
         return diaries
 
 
-class DiaryDetailView(LoginRequiredMixin, generic.DetailView):
+class OnlyYouMixin(UserPassesTestMixin):
+    raise_exception = True
+
+    def test_func(self):
+        # URLに埋め込まれた朱キーから日記データを1件取得。取得できなかった場合は404エラー
+        diary = get_object_or_404(Diary, pk=self.kwargs['pk'])
+        # ログインユーザーと日記の作成ユーザーを比較し、異なればraise_exceptionの指示に従う
+        return self.request.user == diary.user
+
+
+class DiaryDetailView(LoginRequiredMixin, OnlyYouMixin, generic.DetailView):
     model = Diary
     template_name = 'diary_detail.html'
 
 
-class DiaryCreateView(LoginRequiredMixin, generic.CreateView):
+class DiaryCreateView(LoginRequiredMixin, OnlyYouMixin, generic.CreateView):
     model = Diary
     template_name = 'diary_create.html'
     form_class = DiaryCreateForm
@@ -64,7 +76,7 @@ class DiaryCreateView(LoginRequiredMixin, generic.CreateView):
         return super().form_invalid(form)
 
 
-class DiaryUpdateView(LoginRequiredMixin, generic.UpdateView):
+class DiaryUpdateView(LoginRequiredMixin, OnlyYouMixin, generic.UpdateView):
     model = Diary
     template_name = 'diary_update.html'
     form_class = DiaryCreateForm
