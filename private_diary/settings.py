@@ -1,10 +1,10 @@
-
 from .settings_common import *
+
 
 # 本番運用環境用にセキュリティキーを生成し環境変数から読み込む
 SECRET_KEY = os.environ.get('DJANGO_SECRET_KEY')
 
-# デバッグモードを有効にするかどうか(本番では必ずFalseにする)
+# デバッグモードを有効にするかどうか(本番運用では必ずFalseにする)
 DEBUG = False
 
 # 許可するホスト名のリスト
@@ -19,9 +19,9 @@ AWS_SES_ACCESS_KEY_ID = os.environ.get('AWS_SES_ACCESS_KEY_ID')
 AWS_SES_SECRET_ACCESS_KEY = os.environ.get('AWS_SES_SECRET_ACCESS_KEY')
 EMAIL_BACKEND = 'django_ses.SESBackend'
 
-# ロギング設定
+# ロギング
 LOGGING = {
-    'version': 1,  # 1固定
+    'version': 1,
     'disable_existing_loggers': False,
 
     # ロガーの設定
@@ -45,9 +45,9 @@ LOGGING = {
             'class': 'logging.handlers.TimedRotatingFileHandler',
             'filename': os.path.join(BASE_DIR, 'logs/django.log'),
             'formatter': 'prod',
-            'when': 'D',
-            'interval': 1,
-            'backupCount': 7,
+            'when': 'D',  # ログローテーション(新しいファイルへの切り替え)間隔の単位(D=日)
+            'interval': 1,  # ログローテーション間隔(1日単位)
+            'backupCount': 7,  # 保存しておくログファイル数
         },
     },
 
