@@ -8,7 +8,7 @@ SECRET_KEY = os.environ.get('DJANGO_SECRET_KEY')
 DEBUG = False
 
 # 許可するホスト名のリスト
-ALLOWED_HOSTS = [os.environ.get('ALLOWED_HOSTS')]
+ALLOWED_HOSTS = ['*']
 
 # 静的ファイルを配置する場所
 STATIC_ROOT = '/usr/share/nginx/html/static'
